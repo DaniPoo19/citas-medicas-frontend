@@ -18,19 +18,17 @@ header {
     position: relative;
 }
 
-.logo-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+.logo-small {
+    width: 60px; /* Logos más pequeños */
+    height: auto;
 }
 
 header h1 {
     flex: 1;
     text-align: center;
     margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
 }
 
 /* Navbar */
@@ -45,11 +43,15 @@ header h1 {
     color: white;
     text-decoration: none;
     padding: 0.5rem 1rem;
-    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
 }
 
 .navbar a:hover {
     background-color: #45a049;
+    color: #ffffff;
 }
 
 /* Main Section */
@@ -66,6 +68,11 @@ main {
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02); /* Pequeño efecto de zoom al pasar el mouse */
 }
 
 /* Form Section */
@@ -73,6 +80,19 @@ form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Inputs */
+input, select, textarea {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
 }
 
 /* Buttons */
@@ -83,16 +103,46 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 1rem;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-2px);
 }
 
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+/* Time Blocks */
+#time-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.time-block {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.time-block:hover {
+    transform: scale(1.05);
+    background-color: #4CAF50;
+    color: white;
+}
+
+.time-block.selected {
+    background-color: #007BFF;
+    color: white;
 }
 
 /* Table */
@@ -110,6 +160,8 @@ th, td {
 
 th {
     background-color: #f2f2f2;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 tbody tr:hover {
@@ -122,6 +174,7 @@ tbody tr td:last-child {
     gap: 0.5rem;
 }
 
+/* Action Buttons */
 .action-btn {
     padding: 0.25rem 0.5rem;
     border: none;
@@ -137,4 +190,20 @@ tbody tr td:last-child {
 .action-btn.delete {
     background-color: #FF4C4C;
     color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .logo-small {
+        width: 50px;
+    }
+
+    .navbar a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
 }

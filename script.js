@@ -109,6 +109,25 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al cargar los horarios disponibles.");
         }
     }
+    document.addEventListener("DOMContentLoaded", () => {
+        const showRegisterBtn = document.getElementById("show-register");
+        const showAppointmentsBtn = document.getElementById("show-appointments");
+        const formContainer = document.getElementById("form-container");
+        const appointmentsContainer = document.getElementById("appointments-container");
+    
+        // Mostrar formulario de registrar cita
+        showRegisterBtn.addEventListener("click", () => {
+            formContainer.style.display = "block";
+            appointmentsContainer.style.display = "none";
+        });
+    
+        // Mostrar tabla de citas registradas
+        showAppointmentsBtn.addEventListener("click", () => {
+            appointmentsContainer.style.display = "block";
+            formContainer.style.display = "none";
+        });
+    });
+    
 
     // Manejar el envío del formulario
     async function handleFormSubmit(e) {
