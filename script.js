@@ -56,12 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para alternar vistas
     function toggleView(selectedButton, sectionToShow, sectionToHide) {
-        // Resaltar el botón activo
         registerBtn.classList.remove("active-btn");
         appointmentsBtn.classList.remove("active-btn");
         selectedButton.classList.add("active-btn");
 
-        // Mostrar/ocultar las secciones correspondientes
         sectionToShow.style.display = "block";
         sectionToHide.style.display = "none";
     }
@@ -105,59 +103,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Función para actualizar doctores según la especialidad
-    async function updateDoctors() {
-        const type = typeSelect.value;
-        try {
-            const response = await fetch(`${API_BASE_URL}/doctors/${type}`);
-            const doctors = await response.json();
-            doctorSelect.innerHTML = `<option value="" disabled selected>Seleccione un Doctor</option>`;
-            doctors.forEach((doctor) => {
-                const option = document.createElement("option");
-                option.value = doctor.nombre;
-                option.textContent = doctor.nombre;
-                doctorSelect.appendChild(option);
-            });
-        } catch (error) {
-            alert("Error al cargar los doctores.");
-        }
-    }
-
-    // Función para actualizar horarios disponibles
-    async function updateTimeOptions() {
-        const date = dateInput.value;
-        const doctor = doctorSelect.value;
-        if (!date || !doctor) return;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${date}`);
-            const availableTimes = await response.json();
-            timeOptions.innerHTML = "";
-
-            availableTimes.forEach((time) => {
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "btn btn-outline-secondary";
-                button.textContent = time;
-                button.dataset.time = time;
-                button.addEventListener("click", () => {
-                    document.querySelectorAll("#time-options button").forEach((btn) => btn.classList.remove("active"));
-                    button.classList.add("active");
-                });
-                timeOptions.appendChild(button);
-            });
-        } catch (error) {
-            alert("Error al cargar los horarios disponibles.");
-        }
-    }
-
     // Función para manejar el envío del formulario
     async function handleFormSubmit(e) {
         e.preventDefault();
         const tipoDocumento = tipoDocumentoSelect.value;
-        const cedula = cedulaInput.value;
-        const nombre = nameInput.value;
-        const apellido = apellidoInput.value;
+        const cedula = cedulaInput.value.trim();
+        const nombre = nameInput.value.trim();
+        const apellido = apellidoInput.value.trim();
         const fecha = dateInput.value;
         const especialidad = typeSelect.value;
         const doctor = doctorSelect.value;
