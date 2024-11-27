@@ -69,8 +69,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const tipoDocumento = tipoDocumentoSelect.value;
         const cedula = cedulaInput.value.trim();
 
-        if (!tipoDocumento || !cedula || !/^\d+$/.test(cedula)) {
-            cedulaStatus.textContent = "Seleccione un tipo de documento y un número válido.";
+        if (!tipoDocumento) {
+            cedulaStatus.textContent = "Seleccione un tipo de documento.";
+            cedulaStatus.style.color = "red";
+            submitBtn.disabled = true;
+            return;
+        }
+
+        if (!/^\d+$/.test(cedula)) {
+            cedulaStatus.textContent = "Solo se permiten números.";
             cedulaStatus.style.color = "red";
             submitBtn.disabled = true;
             return;
@@ -80,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ tipo_documento: tipoDocumento, cedula }),
+                body: JSON.stringify({ tipoDocumento, cedula }),
             });
             const result = await response.json();
 
@@ -100,6 +107,63 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             cedulaStatus.textContent = "Error al validar el documento.";
             cedulaStatus.style.color = "red";
+        }
+    }
+
+    // Función para actualizar doctores según la especialidad
+    async function updateDoctors() {
+        const type = typeSelect.value;
+        if (!type) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/doctors/${type}`);
+            const doctors = await response.json();
+
+            doctorSelect.innerHTML = `<option value="" disabled selected>Seleccione un Doctor</option>`;
+            if (doctors.length > 0) {
+                doctors.forEach((doctor) => {
+                    const option = document.createElement("option");
+                    option.value = doctor.nombre;
+                    option.textContent = doctor.nombre;
+                    doctorSelect.appendChild(option);
+                });
+            } else {
+                alert("No hay doctores disponibles para esta especialidad.");
+            }
+        } catch (error) {
+            alert("Error al cargar los doctores.");
+        }
+    }
+
+    // Función para actualizar horarios disponibles
+    async function updateTimeOptions() {
+        const date = dateInput.value;
+        const doctor = doctorSelect.value;
+        if (!date || !doctor) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${date}`);
+            const availableTimes = await response.json();
+
+            timeOptions.innerHTML = "";
+            if (availableTimes.length > 0) {
+                availableTimes.forEach((time) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "btn btn-outline-secondary";
+                    button.textContent = time;
+                    button.dataset.time = time;
+                    button.addEventListener("click", () => {
+                        document.querySelectorAll("#time-options button").forEach((btn) => btn.classList.remove("active"));
+                        button.classList.add("active");
+                    });
+                    timeOptions.appendChild(button);
+                });
+            } else {
+                timeOptions.innerHTML = "<p>No hay horarios disponibles.</p>";
+            }
+        } catch (error) {
+            alert("Error al cargar los horarios disponibles.");
         }
     }
 
@@ -124,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/add_appointment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ tipo_documento: tipoDocumento, cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
+                body: JSON.stringify({ tipoDocumento, cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
             });
 
             if (response.ok) {
@@ -143,17 +207,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Función para cargar las citas registradas
+    // Función para cargar las citas registradas
     async function loadAppointments() {
         try {
             const response = await fetch(`${API_BASE_URL}/appointments`);
             const appointments = await response.json();
+
             appointmentsTable.innerHTML = "";
-    
             appointments.forEach((appointment) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${appointment.id}</td>
-                    <td>${appointment.tipo_documento || "No especificado"}</td>
+                    <td>${appointment.tipoDocumento || "No especificado"}</td>
                     <td>${appointment.cedula}</td>
                     <td>${appointment.nombre}</td>
                     <td>${appointment.apellido}</td>
@@ -167,6 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             alert("Error al cargar las citas registradas.");
         }
-    }
-    
+}
+
 });
