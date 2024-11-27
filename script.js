@@ -77,10 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula }),
+            const response = await fetch(`${API_BASE_URL}/validate_cedula/${cedula}`, {
+                method: "GET",
             });
             const result = await response.json();
 
@@ -91,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 apellidoInput.value = result.apellido;
                 submitBtn.disabled = false;
             } else {
-                cedulaStatus.textContent = result.error || "Cédula no encontrada.";
+                cedulaStatus.textContent = result.message || "Cédula no encontrada.";
                 cedulaStatus.style.color = "red";
                 nameInput.value = "";
                 apellidoInput.value = "";
