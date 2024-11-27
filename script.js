@@ -68,20 +68,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // Función para validar la cédula
     async function validateCedula() {
         const cedula = cedulaInput.value.trim();
-
+    
         if (!/^\d+$/.test(cedula)) {
             cedulaStatus.textContent = "Solo se permiten números.";
             cedulaStatus.style.color = "red";
             submitBtn.disabled = true;
             return;
         }
-
+    
         try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula/${cedula}`, {
-                method: "GET",
+            // Realizar solicitud POST para validar la cédula
+            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula }),
             });
             const result = await response.json();
-
+    
             if (response.ok) {
                 cedulaStatus.textContent = "Cédula válida.";
                 cedulaStatus.style.color = "green";
@@ -100,6 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
             cedulaStatus.style.color = "red";
         }
     }
+    
+    
 
     // Función para actualizar doctores según la especialidad
     async function updateDoctors() {
