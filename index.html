@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Citas Médicas</title>
+    <!-- Enlace al favicon -->
+    <link rel="icon" href="assets/mintic_logo.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,11 +13,15 @@
         <div class="logo-container">
             <img src="assets/logotalentotech.jpg" alt="Logo Izquierda" class="logo-left">
             <h1>Gestión de Citas Médicas</h1>
-            <img src="assets/mintic_logo.png alt="Logo Derecha" class="logo-right">
+            <img src="assets/mintic_logo.png" alt="Logo Derecha" class="logo-right">
         </div>
+        <nav class="navbar">
+            <a href="#form-container">Registrar Cita</a>
+            <a href="#appointments-container">Citas Registradas</a>
+        </nav>
     </header>
     <main>
-        <section id="form-container">
+        <section id="form-container" class="card">
             <h2>Registrar Nueva Cita</h2>
             <form id="appointment-form">
                 <div class="form-group">
@@ -60,7 +66,7 @@
                 <button type="submit" id="submit-btn" disabled>Registrar</button>
             </form>
         </section>
-        <section id="appointments-container">
+        <section id="appointments-container" class="card">
             <h2>Citas Registradas</h2>
             <table>
                 <thead>

@@ -1,4 +1,4 @@
-
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
@@ -6,6 +6,7 @@ body {
     padding: 0;
 }
 
+/* Header */
 header {
     background-color: #4CAF50;
     color: white;
@@ -32,40 +33,57 @@ header h1 {
     margin: 0;
 }
 
-.logo-left,
-.logo-right {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
+/* Navbar */
+.navbar {
+    background-color: #3e8e41;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
 }
 
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #45a049;
+}
+
+/* Main Section */
 main {
     max-width: 800px;
     margin: 2rem auto;
     padding: 1rem;
-    background: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
 }
 
+/* Card Style */
+.card {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Form Section */
 form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-input, select, button {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
+/* Buttons */
 button {
     background-color: #4CAF50;
     color: white;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 button:hover {
@@ -77,38 +95,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
-#cedula-status {
-    font-size: 0.9rem;
-    margin-top: 5px;
-}
-
-.time-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
-}
-
-.time-block {
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.time-block:hover {
-    transform: scale(1.05);
-    background-color: #4CAF50;
-    color: white;
-}
-
-.time-block.selected {
-    background-color: #007BFF;
-    color: white;
-}
-
+/* Table */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -125,10 +112,29 @@ th {
     background-color: #f2f2f2;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
-tbody tr:nth-child(odd) {
-    background-color: #fff;
+tbody tr td:last-child {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.action-btn.edit {
+    background-color: #007BFF;
+    color: white;
+}
+
+.action-btn.delete {
+    background-color: #FF4C4C;
+    color: white;
 }
