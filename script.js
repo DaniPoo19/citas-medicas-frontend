@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const appointmentsContainer = document.getElementById("appointments-container");
 
     // Elementos del formulario
+    const tipoDocumentoSelect = document.getElementById("tipo-documento");
     const cedulaInput = document.getElementById("cedula");
     const cedulaStatus = document.getElementById("cedula-status");
     const nameInput = document.getElementById("name");
@@ -67,44 +68,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para validar la cédula
     async function validateCedula() {
+        const tipoDocumento = tipoDocumentoSelect.value;
         const cedula = cedulaInput.value.trim();
-    
-        if (!/^\d+$/.test(cedula)) {
-            cedulaStatus.textContent = "Solo se permiten números.";
+
+        if (!tipoDocumento || !cedula || !/^\d+$/.test(cedula)) {
+            cedulaStatus.textContent = "Seleccione un tipo de documento y un número válido.";
             cedulaStatus.style.color = "red";
             submitBtn.disabled = true;
             return;
         }
-    
+
         try {
-            // Realizar solicitud POST para validar la cédula
             const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula }),
+                body: JSON.stringify({ tipo_documento: tipoDocumento, cedula }),
             });
             const result = await response.json();
-    
+
             if (response.ok) {
-                cedulaStatus.textContent = "Cédula válida.";
+                cedulaStatus.textContent = "Documento válido.";
                 cedulaStatus.style.color = "green";
                 nameInput.value = result.nombre;
                 apellidoInput.value = result.apellido;
                 submitBtn.disabled = false;
             } else {
-                cedulaStatus.textContent = result.message || "Cédula no encontrada.";
+                cedulaStatus.textContent = result.message || "Documento no encontrado.";
                 cedulaStatus.style.color = "red";
                 nameInput.value = "";
                 apellidoInput.value = "";
                 submitBtn.disabled = true;
             }
         } catch (error) {
-            cedulaStatus.textContent = "Error al validar la cédula.";
+            cedulaStatus.textContent = "Error al validar el documento.";
             cedulaStatus.style.color = "red";
         }
     }
-    
-    
 
     // Función para actualizar doctores según la especialidad
     async function updateDoctors() {
@@ -155,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Función para manejar el envío del formulario
     async function handleFormSubmit(e) {
         e.preventDefault();
+        const tipoDocumento = tipoDocumentoSelect.value;
         const cedula = cedulaInput.value;
         const nombre = nameInput.value;
         const apellido = apellidoInput.value;
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const doctor = doctorSelect.value;
         const hora = document.querySelector("#time-options button.active")?.dataset.time;
 
-        if (!cedula || !nombre || !apellido || !fecha || !especialidad || !doctor || !hora) {
+        if (!tipoDocumento || !cedula || !nombre || !apellido || !fecha || !especialidad || !doctor || !hora) {
             alert("Por favor, complete todos los campos.");
             return;
         }
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/add_appointment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
+                body: JSON.stringify({ tipo_documento: tipoDocumento, cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
             });
 
             if (response.ok) {
@@ -201,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${appointment.id}</td>
+                    <td>${appointment.tipo_documento}</td>
                     <td>${appointment.cedula}</td>
                     <td>${appointment.nombre}</td>
                     <td>${appointment.apellido}</td>

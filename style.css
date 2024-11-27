@@ -18,7 +18,7 @@ header {
 }
 
 .logo-small {
-    width: 100px; /* Logos más pequeños */
+    width: 100px;
     height: auto;
 }
 
@@ -83,25 +83,18 @@ main {
 }
 
 .card:hover {
-    transform: scale(1.02); /* Pequeño efecto de zoom al pasar el mouse */
-}
-
-/* Form Section */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    transform: scale(1.02);
 }
 
 /* Inputs */
-input, select, textarea {
+input, select {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus, select:focus {
     border-color: #4CAF50;
     outline: none;
 }
@@ -128,34 +121,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Time Blocks */
-#time-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
-}
-
-.time-block {
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.time-block:hover {
-    transform: scale(1.05);
-    background-color: #4CAF50;
-    color: white;
-}
-
-.time-block.selected {
-    background-color: #007BFF;
-    color: white;
-}
-
 /* Table */
 table {
     width: 100%;
@@ -173,48 +138,4 @@ th {
     background-color: #f2f2f2;
     font-size: 1rem;
     font-weight: bold;
-}
-
-tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-tbody tr td:last-child {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-/* Action Buttons */
-.action-btn {
-    padding: 0.25rem 0.5rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.action-btn.edit {
-    background-color: #007BFF;
-    color: white;
-}
-
-.action-btn.delete {
-    background-color: #FF4C4C;
-    color: white;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 1.5rem;
-    }
-
-    .logo-small {
-        width: 50px;
-    }
-
-    .navbar button {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-    }
 }
