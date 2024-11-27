@@ -148,12 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/appointments`);
             const appointments = await response.json();
             appointmentsTable.innerHTML = "";
-
+    
             appointments.forEach((appointment) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${appointment.id}</td>
-                    <td>${appointment.tipo_documento}</td>
+                    <td>${appointment.tipo_documento || "No especificado"}</td>
                     <td>${appointment.cedula}</td>
                     <td>${appointment.nombre}</td>
                     <td>${appointment.apellido}</td>
@@ -168,4 +168,5 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al cargar las citas registradas.");
         }
     }
+    
 });
