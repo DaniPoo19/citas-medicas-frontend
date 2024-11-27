@@ -41,17 +41,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula/${cedula}`);
+            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula })
+            });
             const result = await response.json();
 
-            if (result.valid) {
+            if (response.ok) {
                 cedulaStatus.textContent = "Cédula válida.";
                 cedulaStatus.style.color = "green";
                 nameInput.value = result.nombre;
                 apellidoInput.value = result.apellido;
                 submitBtn.disabled = false;
             } else {
-                cedulaStatus.textContent = result.message || "Cédula no encontrada.";
+                cedulaStatus.textContent = result.error || "Cédula no encontrada.";
                 cedulaStatus.style.color = "red";
                 nameInput.value = "";
                 apellidoInput.value = "";
@@ -74,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             doctors.forEach((doctor) => {
                 const option = document.createElement("option");
                 option.value = doctor.id;
-                option.textContent = doctor.name;
+                option.textContent = doctor.nombre;
                 doctorSelect.appendChild(option);
             });
         } catch (error) {
@@ -118,10 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const apellido = document.getElementById("apellido").value;
         const date = document.getElementById("date").value;
         const type = document.getElementById("type").value;
-        const doctorId = document.getElementById("doctor").value;
+        const doctor = document.getElementById("doctor").value;
         const time = document.querySelector(".time-block.selected")?.dataset.time;
 
-        if (!cedula || !name || !apellido || !date || !type || !doctorId || !time) {
+        if (!cedula || !name || !apellido || !date || !type || !doctor || !time) {
             alert("Por favor, complete todos los campos.");
             return;
         }
@@ -130,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/add_appointment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula, name, apellido, date, time, type, doctor_id: doctorId }),
+                body: JSON.stringify({ cedula, nombre: name, apellido, fecha: date, hora: time, especialidad: type, doctor })
             });
 
             if (response.ok) {
@@ -160,10 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.innerHTML = `
                     <td>${appointment.id}</td>
                     <td>${appointment.cedula}</td>
-                    <td>${appointment.name}</td>
-                    <td>${appointment.date}</td>
-                    <td>${appointment.time}</td>
-                    <td>${appointment.type}</td>
+                    <td>${appointment.nombre}</td>
+                    <td>${appointment.apellido}</td>
+                    <td>${appointment.fecha}</td>
+                    <td>${appointment.hora}</td>
+                    <td>${appointment.especialidad}</td>
                     <td>${appointment.doctor}</td>
                 `;
                 tableBody.appendChild(row);
