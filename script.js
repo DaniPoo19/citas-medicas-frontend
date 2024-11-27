@@ -110,103 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Función para actualizar doctores según la especialidad
-    async function updateDoctors() {
-        const type = typeSelect.value;
-        if (!type) return;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/doctors/${type}`);
-            const doctors = await response.json();
-
-            doctorSelect.innerHTML = `<option value="" disabled selected>Seleccione un Doctor</option>`;
-            if (doctors.length > 0) {
-                doctors.forEach((doctor) => {
-                    const option = document.createElement("option");
-                    option.value = doctor.nombre;
-                    option.textContent = doctor.nombre;
-                    doctorSelect.appendChild(option);
-                });
-            } else {
-                alert("No hay doctores disponibles para esta especialidad.");
-            }
-        } catch (error) {
-            alert("Error al cargar los doctores.");
-        }
-    }
-
-    // Función para actualizar horarios disponibles
-    async function updateTimeOptions() {
-        const date = dateInput.value;
-        const doctor = doctorSelect.value;
-        if (!date || !doctor) return;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${date}`);
-            const availableTimes = await response.json();
-
-            timeOptions.innerHTML = "";
-            if (availableTimes.length > 0) {
-                availableTimes.forEach((time) => {
-                    const button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "btn btn-outline-secondary";
-                    button.textContent = time;
-                    button.dataset.time = time;
-                    button.addEventListener("click", () => {
-                        document.querySelectorAll("#time-options button").forEach((btn) => btn.classList.remove("active"));
-                        button.classList.add("active");
-                    });
-                    timeOptions.appendChild(button);
-                });
-            } else {
-                timeOptions.innerHTML = "<p>No hay horarios disponibles.</p>";
-            }
-        } catch (error) {
-            alert("Error al cargar los horarios disponibles.");
-        }
-    }
-
-    // Función para manejar el envío del formulario
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        const tipoDocumento = tipoDocumentoSelect.value;
-        const cedula = cedulaInput.value.trim();
-        const nombre = nameInput.value.trim();
-        const apellido = apellidoInput.value.trim();
-        const fecha = dateInput.value;
-        const especialidad = typeSelect.value;
-        const doctor = doctorSelect.value;
-        const hora = document.querySelector("#time-options button.active")?.dataset.time;
-
-        if (!tipoDocumento || !cedula || !nombre || !apellido || !fecha || !especialidad || !doctor || !hora) {
-            alert("Por favor, complete todos los campos.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/add_appointment`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ tipoDocumento, cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
-            });
-
-            if (response.ok) {
-                alert("Cita registrada con éxito.");
-                document.getElementById("appointment-form").reset();
-                timeOptions.innerHTML = "";
-                loadAppointments();
-                toggleView(appointmentsBtn, appointmentsContainer, formContainer);
-            } else {
-                const error = await response.json();
-                alert(error.error || "Error al registrar la cita.");
-            }
-        } catch (error) {
-            alert("Error al registrar la cita.");
-        }
-    }
-
-    // Función para cargar las citas registradas
     // Función para cargar las citas registradas
     async function loadAppointments() {
         try {
@@ -218,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${appointment.id}</td>
-                    <td>${appointment.tipoDocumento || "No especificado"}</td>
+                    <td>${appointment.tipo_documento || "No especificado"}</td>
                     <td>${appointment.cedula}</td>
                     <td>${appointment.nombre}</td>
                     <td>${appointment.apellido}</td>
@@ -232,6 +135,5 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             alert("Error al cargar las citas registradas.");
         }
-}
-
+    }
 });
