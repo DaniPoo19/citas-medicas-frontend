@@ -41,21 +41,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula })
-            });
+            const response = await fetch(`${API_BASE_URL}/validate_cedula/${cedula}`);
             const result = await response.json();
 
-            if (response.ok) {
+            if (result.valid) {
                 cedulaStatus.textContent = "Cédula válida.";
                 cedulaStatus.style.color = "green";
                 nameInput.value = result.nombre;
                 apellidoInput.value = result.apellido;
                 submitBtn.disabled = false;
             } else {
-                cedulaStatus.textContent = result.error || "Cédula no encontrada.";
+                cedulaStatus.textContent = result.message || "Cédula no encontrada.";
                 cedulaStatus.style.color = "red";
                 nameInput.value = "";
                 apellidoInput.value = "";
@@ -77,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
             doctorSelect.innerHTML = `<option value="" disabled selected>Seleccione un Doctor</option>`;
             doctors.forEach((doctor) => {
                 const option = document.createElement("option");
-                option.value = doctor.id;
+                option.value = doctor.nombre;
                 option.textContent = doctor.nombre;
                 doctorSelect.appendChild(option);
             });
@@ -118,14 +114,14 @@ document.addEventListener("DOMContentLoaded", () => {
     async function handleFormSubmit(e) {
         e.preventDefault();
         const cedula = document.getElementById("cedula").value;
-        const name = document.getElementById("name").value;
+        const nombre = document.getElementById("name").value;
         const apellido = document.getElementById("apellido").value;
-        const date = document.getElementById("date").value;
-        const type = document.getElementById("type").value;
+        const fecha = document.getElementById("date").value;
+        const especialidad = document.getElementById("type").value;
         const doctor = document.getElementById("doctor").value;
-        const time = document.querySelector(".time-block.selected")?.dataset.time;
+        const hora = document.querySelector(".time-block.selected")?.dataset.time;
 
-        if (!cedula || !name || !apellido || !date || !type || !doctor || !time) {
+        if (!cedula || !nombre || !apellido || !fecha || !especialidad || !doctor || !hora) {
             alert("Por favor, complete todos los campos.");
             return;
         }
@@ -134,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/add_appointment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula, nombre: name, apellido, fecha: date, hora: time, especialidad: type, doctor })
+                body: JSON.stringify({ cedula, nombre, apellido, fecha, hora, especialidad, doctor }),
             });
 
             if (response.ok) {
