@@ -11,7 +11,6 @@ header {
     background-color: #4CAF50;
     color: white;
     padding: 1rem;
-    text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,7 +18,7 @@ header {
 }
 
 .logo-small {
-    width: 60px; /* Logos más pequeños */
+    width: 100px; /* Logos más pequeños */
     height: auto;
 }
 
@@ -39,19 +38,31 @@ header h1 {
     padding: 0.5rem 0;
 }
 
-.navbar a {
+.navbar button {
     color: white;
+    background-color: transparent;
+    border: 2px solid transparent;
     text-decoration: none;
     padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
+    margin: 0 5px;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s, border-color 0.3s;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.navbar a:hover {
+.navbar button:hover {
     background-color: #45a049;
-    color: #ffffff;
+    transform: scale(1.05);
+}
+
+/* Active Button */
+.navbar button.active-btn {
+    background-color: #007BFF;
+    color: white;
+    border-color: #0056b3;
+    transform: scale(1.05);
 }
 
 /* Main Section */
@@ -202,7 +213,7 @@ tbody tr td:last-child {
         width: 50px;
     }
 
-    .navbar a {
+    .navbar button {
         font-size: 0.9rem;
         padding: 0.4rem 0.8rem;
     }

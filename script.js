@@ -1,27 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const API_BASE_URL = "https://citasmedicaschatbot-production.up.railway.app";
+
+    // Botones de navegación
+    const registerBtn = document.getElementById("view-register-btn");
+    const appointmentsBtn = document.getElementById("view-appointments-btn");
+
+    // Secciones del contenido
+    const formContainer = document.getElementById("form-container");
+    const appointmentsContainer = document.getElementById("appointments-container");
+
+    // Elementos del formulario
     const cedulaInput = document.getElementById("cedula");
     const cedulaStatus = document.getElementById("cedula-status");
     const nameInput = document.getElementById("name");
     const apellidoInput = document.getElementById("apellido");
-    const submitBtn = document.getElementById("submit-btn");
     const dateInput = document.getElementById("date");
+    const typeSelect = document.getElementById("type");
+    const doctorSelect = document.getElementById("doctor");
+    const timeOptions = document.getElementById("time-options");
+    const submitBtn = document.getElementById("submit-btn");
     const validateCedulaBtn = document.getElementById("validate-cedula-btn");
 
-    const API_BASE_URL = "https://citasmedicaschatbot-production.up.railway.app";
+    // Tabla de citas
+    const appointmentsTable = document.getElementById("appointments-table");
 
-    // Configurar la fecha mínima para el campo de fecha
+    // Configuración de la fecha mínima
     setMinDate();
 
-    // Listeners
+    // Listeners para cambiar entre vistas
+    registerBtn.addEventListener("click", () => toggleView(registerBtn, formContainer, appointmentsContainer));
+    appointmentsBtn.addEventListener("click", () => toggleView(appointmentsBtn, appointmentsContainer, formContainer));
+
+    // Listener para validar la cédula
     validateCedulaBtn.addEventListener("click", validateCedula);
-    document.getElementById("type").addEventListener("change", updateDoctors);
-    document.getElementById("doctor").addEventListener("change", updateTimeOptions);
-    document.getElementById("date").addEventListener("change", updateTimeOptions);
+
+    // Listener para actualizar doctores y horarios
+    typeSelect.addEventListener("change", updateDoctors);
+    doctorSelect.addEventListener("change", updateTimeOptions);
+    dateInput.addEventListener("change", updateTimeOptions);
+
+    // Listener para manejar el envío del formulario
     document.getElementById("appointment-form").addEventListener("submit", handleFormSubmit);
 
+    // Cargar citas al inicio
     loadAppointments();
 
-    // Función para configurar la fecha mínima (un día después de la actual)
+    // Función para establecer la fecha mínima en el formulario
     function setMinDate() {
         const today = new Date();
         today.setDate(today.getDate() + 1);
@@ -29,7 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
         dateInput.setAttribute("min", minDate);
     }
 
-    // Validar la cédula
+    // Función para alternar vistas
+    function toggleView(selectedButton, sectionToShow, sectionToHide) {
+        // Resaltar el botón activo
+        registerBtn.classList.remove("active-btn");
+        appointmentsBtn.classList.remove("active-btn");
+        selectedButton.classList.add("active-btn");
+
+        // Mostrar/ocultar las secciones correspondientes
+        sectionToShow.style.display = "block";
+        sectionToHide.style.display = "none";
+    }
+
+    // Función para validar la cédula
     async function validateCedula() {
         const cedula = cedulaInput.value.trim();
 
@@ -41,17 +77,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula/${cedula}`);
+            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula }),
+            });
             const result = await response.json();
 
-            if (result.valid) {
+            if (response.ok) {
                 cedulaStatus.textContent = "Cédula válida.";
                 cedulaStatus.style.color = "green";
                 nameInput.value = result.nombre;
                 apellidoInput.value = result.apellido;
                 submitBtn.disabled = false;
             } else {
-                cedulaStatus.textContent = result.message || "Cédula no encontrada.";
+                cedulaStatus.textContent = result.error || "Cédula no encontrada.";
                 cedulaStatus.style.color = "red";
                 nameInput.value = "";
                 apellidoInput.value = "";
@@ -63,13 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Actualizar los doctores según la especialidad seleccionada
+    // Función para actualizar doctores según la especialidad
     async function updateDoctors() {
-        const type = document.getElementById("type").value;
+        const type = typeSelect.value;
         try {
             const response = await fetch(`${API_BASE_URL}/doctors/${type}`);
             const doctors = await response.json();
-            const doctorSelect = document.getElementById("doctor");
             doctorSelect.innerHTML = `<option value="" disabled selected>Seleccione un Doctor</option>`;
             doctors.forEach((doctor) => {
                 const option = document.createElement("option");
@@ -82,63 +121,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Actualizar los horarios disponibles según el doctor y la fecha seleccionada
+    // Función para actualizar horarios disponibles
     async function updateTimeOptions() {
-        const date = document.getElementById("date").value;
-        const doctor = document.getElementById("doctor").value;
+        const date = dateInput.value;
+        const doctor = doctorSelect.value;
         if (!date || !doctor) return;
 
         try {
             const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${date}`);
             const availableTimes = await response.json();
-            const timeOptions = document.getElementById("time-options");
             timeOptions.innerHTML = "";
 
             availableTimes.forEach((time) => {
-                const timeBlock = document.createElement("div");
-                timeBlock.className = "time-block";
-                timeBlock.textContent = time;
-                timeBlock.dataset.time = time;
-                timeBlock.addEventListener("click", () => {
-                    document.querySelectorAll(".time-block").forEach((block) => block.classList.remove("selected"));
-                    timeBlock.classList.add("selected");
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-outline-secondary";
+                button.textContent = time;
+                button.dataset.time = time;
+                button.addEventListener("click", () => {
+                    document.querySelectorAll("#time-options button").forEach((btn) => btn.classList.remove("active"));
+                    button.classList.add("active");
                 });
-                timeOptions.appendChild(timeBlock);
+                timeOptions.appendChild(button);
             });
         } catch (error) {
             alert("Error al cargar los horarios disponibles.");
         }
     }
-    document.addEventListener("DOMContentLoaded", () => {
-        const showRegisterBtn = document.getElementById("show-register");
-        const showAppointmentsBtn = document.getElementById("show-appointments");
-        const formContainer = document.getElementById("form-container");
-        const appointmentsContainer = document.getElementById("appointments-container");
-    
-        // Mostrar formulario de registrar cita
-        showRegisterBtn.addEventListener("click", () => {
-            formContainer.style.display = "block";
-            appointmentsContainer.style.display = "none";
-        });
-    
-        // Mostrar tabla de citas registradas
-        showAppointmentsBtn.addEventListener("click", () => {
-            appointmentsContainer.style.display = "block";
-            formContainer.style.display = "none";
-        });
-    });
-    
 
-    // Manejar el envío del formulario
+    // Función para manejar el envío del formulario
     async function handleFormSubmit(e) {
         e.preventDefault();
-        const cedula = document.getElementById("cedula").value;
-        const nombre = document.getElementById("name").value;
-        const apellido = document.getElementById("apellido").value;
-        const fecha = document.getElementById("date").value;
-        const especialidad = document.getElementById("type").value;
-        const doctor = document.getElementById("doctor").value;
-        const hora = document.querySelector(".time-block.selected")?.dataset.time;
+        const cedula = cedulaInput.value;
+        const nombre = nameInput.value;
+        const apellido = apellidoInput.value;
+        const fecha = dateInput.value;
+        const especialidad = typeSelect.value;
+        const doctor = doctorSelect.value;
+        const hora = document.querySelector("#time-options button.active")?.dataset.time;
 
         if (!cedula || !nombre || !apellido || !fecha || !especialidad || !doctor || !hora) {
             alert("Por favor, complete todos los campos.");
@@ -155,8 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 alert("Cita registrada con éxito.");
                 document.getElementById("appointment-form").reset();
-                document.getElementById("time-options").innerHTML = "";
+                timeOptions.innerHTML = "";
                 loadAppointments();
+                toggleView(appointmentsBtn, appointmentsContainer, formContainer);
             } else {
                 const error = await response.json();
                 alert(error.error || "Error al registrar la cita.");
@@ -166,13 +187,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Cargar las citas registradas
+    // Función para cargar las citas registradas
     async function loadAppointments() {
         try {
             const response = await fetch(`${API_BASE_URL}/appointments`);
             const appointments = await response.json();
-            const tableBody = document.getElementById("appointments-table");
-            tableBody.innerHTML = "";
+            appointmentsTable.innerHTML = "";
 
             appointments.forEach((appointment) => {
                 const row = document.createElement("tr");
@@ -186,10 +206,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${appointment.especialidad}</td>
                     <td>${appointment.doctor}</td>
                 `;
-                tableBody.appendChild(row);
+                appointmentsTable.appendChild(row);
             });
         } catch (error) {
-            alert("Error al cargar las citas.");
+            alert("Error al cargar las citas registradas.");
         }
     }
 });
