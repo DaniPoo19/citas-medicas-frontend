@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Función para establecer la fecha mínima en el formulario
     function setMinDate() {
         const today = new Date();
-        today.setDate(today.getDate() + 1);
+        today.setDate(today.getDate() + 1); // Establecer la fecha mínima como mañana
         const minDate = today.toISOString().split("T")[0];
         dateInput.setAttribute("min", minDate);
     }
@@ -140,14 +140,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar los doctores según la especialidad
     async function updateDoctors() {
-        const especialidad = typeSelect.value;
+        const especialidad = typeSelect.value;  // Obtener el valor de la especialidad seleccionada
         if (!especialidad) return;
 
         try {
             const response = await fetch(`${API_BASE_URL}/doctors/${especialidad}`);
             const doctors = await response.json();
 
+            // Limpiar el select de doctores
             doctorSelect.innerHTML = '<option value="" disabled selected>Seleccione un Doctor</option>';
+
+            // Añadir los doctores al select
             doctors.forEach((doctor) => {
                 const option = document.createElement("option");
                 option.value = doctor.id;
@@ -169,18 +172,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${fecha}`);
             const availableTimes = await response.json();
 
+            // Limpiar los horarios existentes
             timeOptions.innerHTML = '';
+
+            // Añadir los horarios disponibles
             availableTimes.forEach((hora) => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "btn btn-outline-primary";
                 button.textContent = hora;
+
                 button.onclick = function () {
-                    // Asigna la hora seleccionada al campo correspondiente
+                    // Asignar la hora seleccionada al campo correspondiente
                     timeOptions.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
-                    submitBtn.disabled = false; // Habilita el botón de registro
+                    submitBtn.disabled = false;  // Habilitar el botón de "Registrar"
                 };
+
                 timeOptions.appendChild(button);
             });
         } catch (error) {
