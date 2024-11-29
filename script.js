@@ -186,6 +186,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Función para generar los horarios disponibles basados en los intervalos de 20 minutos
+    function generateAvailableTimes(startTime, endTime) {
+        const availableTimes = [];
+        let start = new Date(`1970-01-01T${startTime}Z`);
+        const end = new Date(`1970-01-01T${endTime}Z`);
+
+        while (start < end) {
+            const hours = start.getUTCHours().toString().padStart(2, "0");
+            const minutes = start.getUTCMinutes().toString().padStart(2, "0");
+            availableTimes.push(`${hours}:${minutes}`);
+            start.setMinutes(start.getMinutes() + 20); // Incrementar 20 minutos
+        }
+
+        return availableTimes;
+    }
+
     // Función para actualizar los horarios disponibles según la fecha y el doctor
     async function updateTimeOptions() {
         const doctorId = doctorSelect.value;
