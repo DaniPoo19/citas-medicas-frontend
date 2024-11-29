@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${cita.cedula}</td>
                     <td>${cita.nombre}</td>
                     <td>${cita.apellido}</td>
-                    <td>${formattedDate}</td> <!-- Fecha formateada -->
+                    <td>${formattedDate}</td>
                     <td>${cita.hora}</td>
                     <td>${cita.especialidad}</td>
                     <td>${cita.doctor}</td>

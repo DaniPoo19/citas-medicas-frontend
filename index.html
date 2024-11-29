@@ -18,7 +18,7 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <button id="view-register-btn" class="btn">Registrar Cita</button>
+        <button id="view-register-btn" class="btn active-btn">Registrar Cita</button>
         <button id="view-appointments-btn" class="btn">Citas Registradas</button>
     </nav>
 
@@ -28,6 +28,7 @@
         <section id="form-container" class="card">
             <h2>Registrar Nueva Cita</h2>
             <form id="appointment-form">
+                <!-- Selección de tipo de documento -->
                 <div class="mb-3">
                     <label for="tipo-documento" class="form-label">Tipo de Documento:</label>
                     <select id="tipo-documento" class="form-select" required>
@@ -37,6 +38,8 @@
                         <option value="Cédula">Cédula</option>
                     </select>
                 </div>
+
+                <!-- Campo para la cédula -->
                 <div class="mb-3">
                     <label for="cedula" class="form-label">Número de Documento:</label>
                     <div class="input-group">
@@ -45,6 +48,8 @@
                     </div>
                     <span id="cedula-status" class="text-muted"></span>
                 </div>
+
+                <!-- Nombre y apellido -->
                 <div class="mb-3">
                     <label for="name" class="form-label">Nombre:</label>
                     <input type="text" id="name" placeholder="Nombre" class="form-control" readonly required />
@@ -53,10 +58,14 @@
                     <label for="apellido" class="form-label">Apellido:</label>
                     <input type="text" id="apellido" placeholder="Apellido" class="form-control" readonly required />
                 </div>
+
+                <!-- Fecha -->
                 <div class="mb-3">
                     <label for="date" class="form-label">Fecha:</label>
                     <input type="date" id="date" class="form-control" required />
                 </div>
+
+                <!-- Especialidad -->
                 <div class="mb-3">
                     <label for="type" class="form-label">Especialidad:</label>
                     <select id="type" class="form-select" required>
@@ -64,16 +73,22 @@
                         <!-- Las especialidades deben ser llenadas dinámicamente -->
                     </select>
                 </div>
+
+                <!-- Doctor -->
                 <div class="mb-3">
                     <label for="doctor" class="form-label">Doctor:</label>
                     <select id="doctor" class="form-select" required>
                         <option value="" disabled selected>Seleccione un Doctor</option>
                     </select>
                 </div>
+
+                <!-- Horarios Disponibles -->
                 <div class="mb-3">
                     <label class="form-label">Horarios Disponibles:</label>
                     <div id="time-options" class="btn-group" role="group" aria-label="Horarios Disponibles"></div>
                 </div>
+
+                <!-- Botón de Enviar -->
                 <button type="submit" id="submit-btn" class="btn btn-primary w-100" disabled>Registrar</button>
             </form>
         </section>
