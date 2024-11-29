@@ -153,8 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Añadir los doctores al select
             doctors.forEach((doctor) => {
                 const option = document.createElement("option");
-                option.value = doctor.id;
-                option.textContent = doctor.nombre;
+                option.value = doctor.id;  // Asignar el id del doctor
+                option.textContent = doctor.nombre;  // Nombre del doctor
                 doctorSelect.appendChild(option);
             });
         } catch (error) {
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fecha: dateInput.value,
             hora: timeOptions.querySelector('.active') ? timeOptions.querySelector('.active').textContent : '',  // Hora seleccionada
             especialidad: typeSelect.value,
-            doctor: doctorSelect.value
+            doctor: doctorSelect.value  // Se envía el id del doctor
         };
 
         if (!formData.hora) {
