@@ -117,18 +117,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const appointments = await response.json();
 
             appointmentsTable.innerHTML = "";
-            appointments.forEach((appointment) => {
+            appointments.forEach((cita) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${appointment.id}</td>
-                    <td>${appointment.tipo_documento || "No especificado"}</td>
-                    <td>${appointment.cedula}</td>
-                    <td>${appointment.nombre}</td>
-                    <td>${appointment.apellido}</td>
-                    <td>${appointment.fecha}</td>
-                    <td>${appointment.hora}</td>
-                    <td>${appointment.especialidad}</td>
-                    <td>${appointment.doctor}</td>
+                    <td>${cita.id}</td>
+                    <td>${cita.tipo_documento}</td>
+                    <td>${cita.cedula}</td>
+                    <td>${cita.nombre}</td>
+                    <td>${cita.apellido}</td>
+                    <td>${cita.fecha}</td>
+                    <td>${cita.hora}</td>
+                    <td>${cita.especialidad}</td>
+                    <td>${cita.doctor}</td>
                 `;
                 appointmentsTable.appendChild(row);
             });
