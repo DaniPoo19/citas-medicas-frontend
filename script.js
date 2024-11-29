@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cargar citas al inicio
     loadAppointments();
 
+    // Cargar especialidades dinámicamente al cargar la página
+    loadSpecialties();
+
     // Función para establecer la fecha mínima en el formulario
     function setMinDate() {
         const today = new Date();
@@ -62,6 +65,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         sectionToShow.style.display = "block";
         sectionToHide.style.display = "none";
+    }
+
+    // Función para cargar las especialidades desde el backend
+    async function loadSpecialties() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/especialidades`);
+            const specialties = await response.json();
+
+            // Limpiar el select de especialidades
+            typeSelect.innerHTML = '<option value="" disabled selected>Seleccione Especialidad</option>';
+
+            // Añadir las especialidades al select
+            specialties.forEach((especialidad) => {
+                const option = document.createElement("option");
+                option.value = especialidad.id;  // Asignar el id de la especialidad
+                option.textContent = especialidad.nombre;  // Nombre de la especialidad
+                typeSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error al cargar las especialidades:", error);
+        }
     }
 
     // Función para validar la cédula
@@ -140,11 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar los doctores según la especialidad
     async function updateDoctors() {
-        const especialidad = typeSelect.value;  // Obtener el valor de la especialidad seleccionada
-        if (!especialidad) return;
+        const especialidadId = typeSelect.value;  // Obtener el id de la especialidad seleccionada
+        if (!especialidadId) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/doctors/${especialidad}`);
+            const response = await fetch(`${API_BASE_URL}/doctors/${especialidadId}`);
             const doctors = await response.json();
 
             // Limpiar el select de doctores
@@ -164,12 +188,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar los horarios disponibles según la fecha y el doctor
     async function updateTimeOptions() {
-        const doctor = doctorSelect.value;
+        const doctorId = doctorSelect.value;
         const fecha = dateInput.value;
-        if (!doctor || !fecha) return;
+        if (!doctorId || !fecha) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${fecha}`);
+            const response = await fetch(`${API_BASE_URL}/available_times/${doctorId}/${fecha}`);
             const availableTimes = await response.json();
 
             // Limpiar los horarios existentes
