@@ -119,13 +119,14 @@ document.addEventListener("DOMContentLoaded", () => {
             appointmentsTable.innerHTML = "";
             appointments.forEach((cita) => {
                 const row = document.createElement("tr");
+                const formattedDate = new Date(cita.fecha).toLocaleDateString(); // Formato local de fecha
                 row.innerHTML = `
                     <td>${cita.id}</td>
                     <td>${cita.tipo_documento}</td>
                     <td>${cita.cedula}</td>
                     <td>${cita.nombre}</td>
                     <td>${cita.apellido}</td>
-                    <td>${cita.fecha}</td>
+                    <td>${formattedDate}</td> <!-- Fecha formateada -->
                     <td>${cita.hora}</td>
                     <td>${cita.especialidad}</td>
                     <td>${cita.doctor}</td>
@@ -134,6 +135,97 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         } catch (error) {
             alert("Error al cargar las citas registradas.");
+        }
+    }
+
+    // Función para actualizar los doctores según la especialidad
+    async function updateDoctors() {
+        const especialidad = typeSelect.value;
+        if (!especialidad) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/doctors/${especialidad}`);
+            const doctors = await response.json();
+
+            doctorSelect.innerHTML = '<option value="" disabled selected>Seleccione un Doctor</option>';
+            doctors.forEach((doctor) => {
+                const option = document.createElement("option");
+                option.value = doctor.id;
+                option.textContent = doctor.nombre;
+                doctorSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error al cargar doctores:", error);
+        }
+    }
+
+    // Función para actualizar los horarios disponibles según la fecha y el doctor
+    async function updateTimeOptions() {
+        const doctor = doctorSelect.value;
+        const fecha = dateInput.value;
+        if (!doctor || !fecha) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/available_times/${doctor}/${fecha}`);
+            const availableTimes = await response.json();
+
+            timeOptions.innerHTML = '';
+            availableTimes.forEach((hora) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-outline-primary";
+                button.textContent = hora;
+                button.onclick = function () {
+                    // Asigna la hora seleccionada al campo correspondiente
+                    timeOptions.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    submitBtn.disabled = false; // Habilita el botón de registro
+                };
+                timeOptions.appendChild(button);
+            });
+        } catch (error) {
+            console.error("Error al cargar horarios disponibles:", error);
+        }
+    }
+
+    // Función para manejar el envío del formulario
+    async function handleFormSubmit(event) {
+        event.preventDefault();  // Evitar el envío tradicional del formulario
+
+        const formData = {
+            tipoDocumento: tipoDocumentoSelect.value,
+            cedula: cedulaInput.value.trim(),
+            nombre: nameInput.value.trim(),
+            apellido: apellidoInput.value.trim(),
+            fecha: dateInput.value,
+            hora: timeOptions.querySelector('.active') ? timeOptions.querySelector('.active').textContent : '',  // Hora seleccionada
+            especialidad: typeSelect.value,
+            doctor: doctorSelect.value
+        };
+
+        if (!formData.hora) {
+            alert("Por favor, seleccione un horario.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/add_appointment`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert("Cita registrada con éxito");
+                loadAppointments();  // Recargar la lista de citas
+                formContainer.reset();  // Limpiar el formulario
+                submitBtn.disabled = true;
+            } else {
+                alert("Error al registrar la cita");
+            }
+        } catch (error) {
+            console.error("Error al enviar los datos del formulario:", error);
+            alert("Hubo un error al registrar la cita.");
         }
     }
 });
