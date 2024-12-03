@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "http://127.0.0.1:5000"; // URL local para el backend
+    const API_BASE_URL = "citasmedicaschatbot-production.up.railway.app"; 
 
     // Botones de navegación
     const registerBtn = document.getElementById("view-register-btn");
