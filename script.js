@@ -1,13 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "https://citasmedicaschatbot-production.up.railway.app";
+    const API_BASE_URL = "http://127.0.0.1:5000"; // URL local para el backend
 
     // Botones de navegación
     const registerBtn = document.getElementById("view-register-btn");
     const appointmentsBtn = document.getElementById("view-appointments-btn");
 
     // Secciones del contenido
-    const formContainer = document.getElementById("form-container");
+    const validationSection = document.getElementById("validation-section");
+    const fullFormSection = document.getElementById("full-form-section");
     const appointmentsContainer = document.getElementById("appointments-container");
+    
+    // Almacenar el paciente_id después de la validación
+    let pacienteId = null; 
 
     // Elementos del formulario
     const tipoDocumentoSelect = document.getElementById("tipo-documento");
@@ -29,8 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setMinDate();
 
     // Listeners para cambiar entre vistas
-    registerBtn.addEventListener("click", () => toggleView(registerBtn, formContainer, appointmentsContainer));
-    appointmentsBtn.addEventListener("click", () => toggleView(appointmentsBtn, appointmentsContainer, formContainer));
+    registerBtn.addEventListener("click", () => toggleView(registerBtn, validationSection, appointmentsContainer));
+    appointmentsBtn.addEventListener("click", () => toggleView(appointmentsBtn, appointmentsContainer, validationSection, fullFormSection));
 
     // Listener para validar la cédula
     validateCedulaBtn.addEventListener("click", validateCedula);
@@ -58,13 +62,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Función para alternar vistas
-    function toggleView(selectedButton, sectionToShow, sectionToHide) {
+    function toggleView(selectedButton, sectionToShow, ...sectionsToHide) {
         registerBtn.classList.remove("active-btn");
         appointmentsBtn.classList.remove("active-btn");
         selectedButton.classList.add("active-btn");
 
         sectionToShow.style.display = "block";
-        sectionToHide.style.display = "none";
+        sectionsToHide.forEach(section => {
+            section.style.display = "none";
+        });
     }
 
     // Función para cargar las especialidades desde el backend
@@ -89,50 +95,66 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Función para validar la cédula
-    async function validateCedula() {
-        const tipoDocumento = tipoDocumentoSelect.value;
-        const cedula = cedulaInput.value.trim();
+    // Función para validar la cédula
+async function validateCedula() {
+    const tipoDocumento = tipoDocumentoSelect.value;
+    const cedula = cedulaInput.value.trim();
 
-        if (!tipoDocumento) {
-            cedulaStatus.textContent = "Seleccione un tipo de documento.";
-            cedulaStatus.style.color = "red";
-            submitBtn.disabled = true;
-            return;
-        }
-
-        if (!/^\d+$/.test(cedula)) {
-            cedulaStatus.textContent = "Solo se permiten números.";
-            cedulaStatus.style.color = "red";
-            submitBtn.disabled = true;
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ tipoDocumento, cedula }),
-            });
-            const result = await response.json();
-
-            if (response.ok) {
-                cedulaStatus.textContent = "Documento válido.";
-                cedulaStatus.style.color = "green";
-                nameInput.value = result.nombre;
-                apellidoInput.value = result.apellido;
-                submitBtn.disabled = false;
-            } else {
-                cedulaStatus.textContent = result.message || "Documento no encontrado.";
-                cedulaStatus.style.color = "red";
-                nameInput.value = "";
-                apellidoInput.value = "";
-                submitBtn.disabled = true;
-            }
-        } catch (error) {
-            cedulaStatus.textContent = "Error al validar el documento.";
-            cedulaStatus.style.color = "red";
-        }
+    if (!tipoDocumento) {
+        cedulaStatus.textContent = "Seleccione un tipo de documento.";
+        cedulaStatus.style.color = "red";
+        submitBtn.disabled = true;
+        return;
     }
+
+    if (!/^\d+$/.test(cedula)) {
+        cedulaStatus.textContent = "Solo se permiten números.";
+        cedulaStatus.style.color = "red";
+        submitBtn.disabled = true;
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/validate_cedula`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tipoDocumento, cedula }),
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+            cedulaStatus.textContent = "Documento válido.";
+            cedulaStatus.style.color = "green";
+            nameInput.value = result.nombre;
+            apellidoInput.value = result.apellido;
+            submitBtn.disabled = false;
+
+            // Guardar el paciente_id obtenido del backend
+            pacienteId = result.paciente_id;
+
+            // Mostrar la siguiente parte del formulario con animación más fluida
+            fullFormSection.classList.remove("hidden");
+            
+            // Usar requestAnimationFrame para asegurar que el navegador procese los cambios antes de la animación
+            requestAnimationFrame(() => {
+                fullFormSection.classList.add("slide-down");
+            });
+        } else {
+            cedulaStatus.textContent = result.message || "Documento no encontrado.";
+            cedulaStatus.style.color = "red";
+            nameInput.value = "";
+            apellidoInput.value = "";
+            submitBtn.disabled = true;
+            pacienteId = null; // Limpiar el paciente_id si no se encuentra
+        }
+    } catch (error) {
+        cedulaStatus.textContent = "Error al validar el documento.";
+        cedulaStatus.style.color = "red";
+        pacienteId = null; // Limpiar el paciente_id en caso de error
+    }
+}
+
+    
 
     // Función para cargar las citas registradas
     async function loadAppointments() {
@@ -143,14 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
             appointmentsTable.innerHTML = "";
             appointments.forEach((cita) => {
                 const row = document.createElement("tr");
-                const formattedDate = new Date(cita.fecha).toLocaleDateString(); // Formato local de fecha
                 row.innerHTML = `
                     <td>${cita.id}</td>
                     <td>${cita.tipo_documento}</td>
                     <td>${cita.cedula}</td>
                     <td>${cita.nombre}</td>
                     <td>${cita.apellido}</td>
-                    <td>${formattedDate}</td>
+                    <td>${cita.fecha}</td>
                     <td>${cita.hora}</td>
                     <td>${cita.especialidad}</td>
                     <td>${cita.doctor}</td>
@@ -164,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar los doctores según la especialidad
     async function updateDoctors() {
-        const especialidadId = typeSelect.value;  // Obtener el id de la especialidad seleccionada
+        const especialidadId = typeSelect.value;
         if (!especialidadId) return;
 
         try {
@@ -187,73 +208,97 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Función para actualizar los horarios disponibles según la fecha y el doctor
-    async function updateTimeOptions() {
-        const doctorId = doctorSelect.value;
-        const fecha = dateInput.value;
-        if (!doctorId || !fecha) return;
+    // Función para actualizar los horarios disponibles según la fecha y el doctor
+// Función para actualizar los horarios disponibles según la fecha y el doctor
+async function updateTimeOptions() {
+    const doctorId = doctorSelect.value;
+    const fecha = dateInput.value;
+    if (!doctorId || !fecha) return;
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/available_times/${doctorId}/${fecha}`);
-            const availableTimes = await response.json();
+    try {
+        const response = await fetch(`${API_BASE_URL}/available_times/${doctorId}/${fecha}`);
+        const availableTimes = await response.json();
 
-            // Limpiar los horarios existentes
-            timeOptions.innerHTML = '';
+        // Depurar si se están recibiendo correctamente los horarios
+        console.log("Horarios disponibles recibidos:", availableTimes);
 
-            // Añadir los horarios disponibles
-            availableTimes.forEach((hora) => {
+        // Verificar si no hay horarios disponibles
+        if (!availableTimes || availableTimes.length === 0) {
+            timeOptions.innerHTML = "<p>No hay horarios disponibles para la fecha seleccionada.</p>";
+            return;
+        }
+
+        // Limpiar los horarios existentes
+        timeOptions.innerHTML = '';
+
+        // Añadir los horarios disponibles
+        availableTimes.forEach((hora) => {
+            if (hora) {  // Asegurarse de que la hora no sea un valor vacío o nulo
                 const button = document.createElement("button");
                 button.type = "button";
-                button.className = "btn btn-outline-primary";
-                button.textContent = hora;
+                button.className = "btn time-option-button";
+                button.textContent = hora;  // Asegúrate de que `hora` sea el valor correcto que necesitas mostrar
 
+                button.classList.add("btn-outline-primary");
                 button.onclick = function () {
-                    // Asignar la hora seleccionada al campo correspondiente
                     timeOptions.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
-                    submitBtn.disabled = false;  // Habilitar el botón de "Registrar"
+                    submitBtn.disabled = false; // Habilitar el botón de "Registrar"
                 };
 
                 timeOptions.appendChild(button);
-            });
-        } catch (error) {
-            console.error("Error al cargar horarios disponibles:", error);
-        }
+            }
+        });
+    } catch (error) {
+        console.error("Error al cargar horarios disponibles:", error);
     }
+}
+
+
 
     // Función para manejar el envío del formulario
     async function handleFormSubmit(event) {
-        event.preventDefault();  // Evitar el envío tradicional del formulario
-
+        event.preventDefault();
+    
+        if (!pacienteId) {
+            alert("Debe validar la cédula del paciente antes de agendar la cita.");
+            return;
+        }
+    
         const formData = {
+            paciente_id: pacienteId,  // Usar el paciente_id validado
             tipoDocumento: tipoDocumentoSelect.value,
             cedula: cedulaInput.value.trim(),
             nombre: nameInput.value.trim(),
             apellido: apellidoInput.value.trim(),
-            fecha: dateInput.value,
-            hora: timeOptions.querySelector('.active') ? timeOptions.querySelector('.active').textContent : '',  // Hora seleccionada
-            especialidad: typeSelect.value,
-            doctor: doctorSelect.value  // Se envía el id del doctor
+            fecha_cita: dateInput.value,
+            hora_cita: timeOptions.querySelector('.active') ? timeOptions.querySelector('.active').textContent : '',
+            especialidad_id: typeSelect.value,
+            medico_id: doctorSelect.value
         };
-
-        if (!formData.hora) {
+    
+        if (!formData.hora_cita) {
             alert("Por favor, seleccione un horario.");
             return;
         }
-
+    
         try {
-            const response = await fetch(`${API_BASE_URL}/add_appointment`, {
+            const response = await fetch(`${API_BASE_URL}/citas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
-
+    
             if (response.ok) {
                 alert("Cita registrada con éxito");
-                loadAppointments();  // Recargar la lista de citas
-                formContainer.reset();  // Limpiar el formulario
+                loadAppointments();
+                document.getElementById("appointment-form").reset();
                 submitBtn.disabled = true;
+                pacienteId = null; // Limpiar el paciente_id después del registro
+                fullFormSection.classList.add("hidden"); // Ocultar la sección del formulario completo después de enviar
             } else {
-                alert("Error al registrar la cita");
+                const errorResponse = await response.json();
+                alert(`Error al registrar la cita: ${errorResponse.message}`);
             }
         } catch (error) {
             console.error("Error al enviar los datos del formulario:", error);

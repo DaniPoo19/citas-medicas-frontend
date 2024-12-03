@@ -24,10 +24,10 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Formulario de Registro -->
-        <section id="form-container" class="card">
-            <h2>Registrar Nueva Cita</h2>
-            <form id="appointment-form">
+        <!-- Sección de Validación -->
+        <section id="validation-section" class="card">
+            <h2>Validar Paciente</h2>
+            <form id="validation-form">
                 <!-- Selección de tipo de documento -->
                 <div class="mb-3">
                     <label for="tipo-documento" class="form-label">Tipo de Documento:</label>
@@ -36,6 +36,7 @@
                         <option value="Registro Civil">Registro Civil</option>
                         <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
                         <option value="Cédula">Cédula</option>
+                        <option value="Cédula de Extranjería">Cédula de Extranjería</option>
                     </select>
                 </div>
 
@@ -44,11 +45,18 @@
                     <label for="cedula" class="form-label">Número de Documento:</label>
                     <div class="input-group">
                         <input type="text" id="cedula" placeholder="Número de Documento" class="form-control" required />
-                        <button type="button" id="validate-cedula-btn" class="btn btn-success">Validar</button>
+                        <button type="button" id="validate-cedula-btn" class="btn btn-primary">Validar</button>
                     </div>
                     <span id="cedula-status" class="text-muted"></span>
                 </div>
+                
+            </form>
+        </section>
 
+        <!-- Formulario de Registro (oculto por defecto) -->
+        <section id="full-form-section" class="card hidden">
+            <h2>Registrar Nueva Cita</h2>
+            <form id="appointment-form">
                 <!-- Nombre y apellido -->
                 <div class="mb-3">
                     <label for="name" class="form-label">Nombre:</label>
@@ -63,6 +71,7 @@
                 <div class="mb-3">
                     <label for="date" class="form-label">Fecha:</label>
                     <input type="date" id="date" class="form-control" required />
+                    <small id="date-help" class="form-text text-muted">Seleccione una fecha a partir de mañana.</small>
                 </div>
 
                 <!-- Especialidad -->
@@ -84,10 +93,11 @@
 
                 <!-- Horarios Disponibles -->
                 <div class="mb-3">
-                    <label class="form-label">Horarios Disponibles:</label>
-                    <div id="time-options" class="btn-group" role="group" aria-label="Horarios Disponibles"></div>
+                    <div id="time-options-container">
+                        <label class="form-label">Horarios Disponibles:</label>
+                        <div id="time-options" class="time-options-grid"></div>
+                    </div>
                 </div>
-
 
                 <!-- Botón de Enviar -->
                 <button type="submit" id="submit-btn" class="btn btn-primary w-100" disabled>Registrar</button>
@@ -97,7 +107,7 @@
         <!-- Tabla de Citas Registradas -->
         <section id="appointments-container" class="card" style="display: none;">
             <h2>Citas Registradas</h2>
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>ID</th>

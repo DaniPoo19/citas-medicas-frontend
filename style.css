@@ -1,15 +1,15 @@
 /* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    background-color: #F8F9FA; /* Fondo suave blanco para relajación */
     margin: 0;
     padding: 0;
 }
 
 /* Header */
 header {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #4CAF50; /* Verde principal más fresco para el encabezado */
+    color: #F8F9FA; /* Texto claro para buen contraste */
     padding: 1rem;
     display: flex;
     justify-content: space-between;
@@ -26,59 +26,67 @@ header h1 {
     flex: 1;
     text-align: center;
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
+    color: #FFFFFF; /* Texto blanco para máxima legibilidad */
 }
 
 /* Navbar */
 .navbar {
-    background-color: #3e8e41;
+    background: #4CAF50; /* Verde principal */
     display: flex;
     justify-content: center;
-    padding: 0.5rem 0;
+    padding: 0.8rem 0;
 }
 
+/* Botones de navegación */
 .navbar button {
-    color: white;
-    background-color: transparent;
+    color: #F8F9FA; /* Texto claro */
+    background-color: #4CAF50; /* Fondo verde */
     border: 2px solid transparent;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
+    padding: 0.7rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
-    margin: 0 5px;
-    transition: background-color 0.3s, color 0.3s, transform 0.2s, border-color 0.3s;
-    border-radius: 5px;
+    margin: 0 10px;
+    border-radius: 8px;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera para los botones */
+    transition: all 0.3s ease-in-out;
 }
 
+/* Efecto hover en los botones de la barra de navegación */
 .navbar button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
+    background-color: #3C8D40; /* Verde más oscuro para el hover */
+    transform: translateY(-3px); /* Levantar un poco el botón */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Incrementar la sombra al hacer hover */
 }
 
-/* Active Button */
+/* Botón activo (seleccionado) */
 .navbar button.active-btn {
-    background-color: #007BFF;
-    color: white;
-    border-color: #0056b3;
+    background-color: #3E8EDE; /* Azul claro para el botón activo */
+    color: #FFFFFF; /* Texto blanco para buen contraste */
+    border-color: #357ABD; /* Un azul más oscuro para el borde */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Añadir más profundidad al botón activo */
     transform: scale(1.05);
 }
 
 /* Main Section */
 main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+    max-width: 900px; /* Aumentar el ancho máximo del contenido */
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background-color: #FFFFFF; /* Fondo blanco limpio para mantener claridad */
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Card Style */
 .card {
-    background: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    background: #FFFFFF; /* Fondo blanco para mantener limpieza */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+    border-radius: 12px; /* Aumentar el radio de las esquinas */
+    padding: 1.5rem; /* Aumentar el padding para más espacio interno */
+    margin-bottom: 2rem;
     transition: transform 0.3s ease-in-out;
 }
 
@@ -86,33 +94,60 @@ main {
     transform: scale(1.02);
 }
 
+/* Clase para ocultar la sección */
+.hidden {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Animación suave de aparición */
+.slide-down {
+    animation: slideDown 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes slideDown {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 /* Inputs */
 input, select {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border: 1px solid #4CAF50; /* Borde verde */
+    border-radius: 8px;
     font-size: 1rem;
+    width: 100%;
+    margin-top: 0.5rem;
+    background-color: #F8F9FA; /* Fondo claro */
 }
 
 input:focus, select:focus {
-    border-color: #4CAF50;
+    border-color: #3E8EDE; /* Cambiar a color azul para el borde */
     outline: none;
 }
 
 /* Buttons */
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 0.5rem;
+    background-color: #4CAF50; /* Fondo verde */
+    color: #F8F9FA; /* Texto blanco */
+    padding: 0.75rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     font-size: 1rem;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #3C8D40; /* Verde más oscuro al hacer hover */
     transform: translateY(-2px);
 }
 
@@ -132,10 +167,109 @@ th, td {
     text-align: center;
     padding: 0.75rem;
     border: 1px solid #ddd;
+    color: #333; /* Color oscuro para el texto de las celdas */
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #FFFFFF; /* Fondo blanco para encabezados */
+    color: #333; /* Texto negro para asegurar buena visibilidad */
     font-size: 1rem;
     font-weight: bold;
+    padding: 1rem; /* Añadir padding adicional para mejor visibilidad */
+    border-bottom: 2px solid #ddd; /* Añadir borde inferior para separar encabezados de datos */
+}
+
+/* Contenedor de horarios */
+#time-options-container {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+/* Título del contenedor */
+#time-options-container label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+    color: #333745; /* Color oscuro para etiquetas */
+}
+
+/* Organizar los horarios en una cuadrícula */
+.time-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Estilo de los botones de horarios disponibles */
+.time-options-grid button.time-option-button {
+    padding: 1rem;
+    background: #FFFFFF; /* Fondo claro */
+    color: #4CAF50; /* Texto verde */
+    border: 2px solid #4CAF50; /* Borde verde */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Efecto hover en los botones de horarios */
+.time-options-grid button.time-option-button:hover {
+    background: #4CAF50; /* Fondo verde al hacer hover */
+    color: #FFFFFF; /* Texto blanco */
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo del botón de horario seleccionado */
+.time-options-grid button.time-option-button.active {
+    background-color: #3E8EDE; /* Fondo azul para botón seleccionado */
+    color: #FFFFFF; /* Texto claro */
+    border-color: #357ABD;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+/* Botón deshabilitado */
+.time-options-grid button.time-option-button.disabled {
+    background-color: #E0E0E0;
+    color: #AAA;
+    border-color: #DDD;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Ajuste del botón de validación */
+#validate-cedula-btn {
+    margin-left: 10px;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    height: 100%; /* Ajustar la altura para alinearse mejor con el input */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #3E8EDE; /* Azul suave para botón de validación */
+    color: #FFFFFF; /* Texto blanco */
+    border: none; /* Remover borde */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#validate-cedula-btn:hover {
+    background-color: #357ABD; /* Color un poco más oscuro al hacer hover */
+    transform: translateY(-2px);
+}
+
+form .mb-3 {
+    margin-bottom: 1.5rem;
+}
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+#cedula {
+    flex: 1;
 }
