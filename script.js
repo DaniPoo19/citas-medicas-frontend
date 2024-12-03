@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "citasmedicaschatbot-production.up.railway.app"; 
+    const API_BASE_URL = "https://citasmedicaschatbot-production.up.railway.app";
 
     // Botones de navegación
     const registerBtn = document.getElementById("view-register-btn");
